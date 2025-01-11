@@ -20,6 +20,9 @@ Este proyecto tiene como objetivo desarrollar un sistema que permita a vendedore
 - **Pronósticos futuros:**
   - Datos estimados para las ventas futuras generados por métodos estadísticos.
   - Mismo nivel de detalle que las ventas históricas.
+  - Varias grupos de columnas que contienen *la cantidad vendida* e *ingresos generados luego de efectuar una operacion
+
+  **Lista de operaciones realizadas*
 
 ---
 
@@ -27,24 +30,27 @@ Este proyecto tiene como objetivo desarrollar un sistema que permita a vendedore
 - Permite a los vendedores interactuar con el sistema utilizando lenguaje natural.
 - Traduce solicitudes a operaciones específicas sobre los datos.
   - Ejemplo: "Incrementa las ventas del cliente X en enero en $5,000."
-  - Salida: Operación en Python para modificar el dataset.
+  - Salida: Funcion en python con los parámetros requeridos para efectuar la operacion.
 
 ---
 
 ### **3. Control de Cambios Estilo Git**
-- Cada operación realizada sobre el dataset se registra como un commit.
+- Cada operación realizada sobre el dataset se registra Generando los nuevos valores para la *Cantidad Vendida* y los *Ingresos Asociados*.
 - **Contenido del commit:**
+  - Dataset.
+  - Identificador del Commit
   - Fecha y hora.
   - Usuario que realizó el cambio.
   - Operación ejecutada.
-  - Diferencias entre el dataset original y el modificado.
 
 - **Ejemplo de Registro:**
   ```json
   {
+      "dataset": "cliente_dataset_20240902_01.parquet",
       "user": "Juan Perez",
       "timestamp": "2025-01-07T10:00:00",
-      "operation": "Incremento de ventas en $5000 para cliente X en enero",
+      "description": "Incremento de ventas en $5000 para cliente X en enero",
+      "operation":"",
       "diff": {
           "index": 123,
           "original": {"Cantidad": 10000},
@@ -57,11 +63,12 @@ Este proyecto tiene como objetivo desarrollar un sistema que permita a vendedore
 
 ### **4. Interfaz de Usuario (UI)**
 - Permite a los vendedores:
+  - Definir la forma como quieren revisar su Dataset en cuando a agrupaciones y filtros.
   - Ingresar solicitudes en lenguaje natural.
   - Visualizar los datos antes y después de los ajustes.
   - Confirmar o revertir cambios.
 - **Tecnologías sugeridas:**
-  - FastAPI + Streamlit o Gradio.
+  - FastAPI + Streamlit.
 
 ---
 
@@ -71,9 +78,9 @@ graph TD
     A[Cargar datasets iniciales] --> B[Configurar objetivos de venta]
     B --> C[Solicitudes en lenguaje natural]
     C --> D[Interpretar con LLM]
-    D --> E[Ejecutar operaciones en el dataset]
+    D --> |Comando Python| E[Ejecutar operaciones en el dataset]
     E --> F[Registrar cambios estilo Git]
-    F --> G[Validar objetivos de ventas]
+    F --> G[Recalcular objetivos de ventas]
     G -->|Cumplido| H[Guardar y notificar]
     G -->|No cumplido| C
 ```
