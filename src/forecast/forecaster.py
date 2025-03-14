@@ -10,7 +10,7 @@ from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
 import os
 from prophet.serialize import model_to_json, model_from_json
-
+import json
 
 class Forecaster:
 
@@ -77,7 +77,7 @@ class Forecaster:
             models[sku] = model_to_json(model)
 
         with open(file_path, "w") as writer:
-            writer.write(models)
+            json.dump(models, writer, indent=4)
 
     def save_forecast(self):
         self.forecast_df.to_parquet("forecast.parquet")
