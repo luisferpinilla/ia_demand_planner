@@ -11,7 +11,7 @@ from datetime import datetime
 from tqdm import tqdm
 import pdb
 
-from forecaster import Forecaster
+from forecast.forecaster import Forecaster
 
 dtypes = {
     "Planta": str,
