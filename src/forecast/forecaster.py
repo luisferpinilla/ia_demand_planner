@@ -9,7 +9,7 @@ from prophet import Prophet
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
 import os
-from prophet.serialize import model_to_json, model_from_json
+from prophet.serialize import model_to_dict, model_from_dict
 import json
 
 class Forecaster:
@@ -28,11 +28,8 @@ class Forecaster:
         )
 
         cap = ts["y"].max() * 2
-
-        ts["cap"] = cap
-        ts["floor"] = 0
-
-        m = Prophet(growth="logistic")
+        
+        m = Prophet()
         m.fit(ts)
 
         self.models[sku] = m
@@ -74,13 +71,13 @@ class Forecaster:
 
         models = dict()
         for sku, model in self.models.items():
-            models[sku] = model_to_json(model)
+            models[sku] = model_to_dict(model)
 
         with open(file_path, "w") as writer:
             json.dump(models, writer, indent=4)
 
-    def save_forecast(self):
-        self.forecast_df.to_parquet("forecast.parquet")
+    def save_forecast(self, file_path: str):
+        self.forecast_df.to_parquet(file_path)
 
     def get_forecast(self) -> pd.DataFrame:
         return self.forecast_df
