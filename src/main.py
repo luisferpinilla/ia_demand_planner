@@ -9,7 +9,7 @@ import pandas as pd
 import calendar
 from datetime import datetime
 from tqdm import tqdm
-
+import pdb
 
 from forecaster import Forecaster
 
@@ -27,7 +27,7 @@ dtypes = {
     "PrecioVentaCOP": str,
 }
 
-df = pd.read_csv("../../data/Ventas.txt", dtype=dtypes)
+df = pd.read_csv("../data/Ventas.txt", dtype=dtypes)
 
 # Remover signos $ de las columnas de dinero
 columnas_dinero = [
@@ -55,16 +55,27 @@ history_df = df.pivot_table(
 
 # Remover columnas cuya suma sea 0  
 sku_sin_ventas = history_df.columns[history_df.sum() == 0]
-history_df.drop(columns=sku_sin_ventas, inplace=True)
 
-forecaster = Forecaster(history_df)
+if len(sku_sin_ventas) > 0:
+    
+    print(f"Removiendo {len(sku_sin_ventas)} SKU sin ventas")
+
+    history_df.drop(columns=sku_sin_ventas, inplace=True)
+
+sku_con_pocas_ventas = [x for x in history_df.columns if history_df[history_df[x]>10].shape[0]>5]
+
+if len(sku_con_pocas_ventas) > 0:
+    print(f"Removiendo {len(sku_con_pocas_ventas)} SKU con pocas ventas")
+    history_df.drop(columns=sku_con_pocas_ventas, inplace=True)
+
+forecaster = Forecaster(history_df[:20])
 
 forecaster.run()
 
 forecast_df = forecaster.get_forecast()
 
-forecaster.save_models("models.json")
+forecaster.save_models("../data/output/models.json")
 
 print("Escribiendo archivo parquet")
-forecaster.save_forecast()
+forecaster.save_forecast("../data/output/forecast.parquet")
 print("Archivo parquet escrito")
